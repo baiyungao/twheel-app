@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { TracingService } from '../services/tracing.service';
+import { SessionService } from '../services/session.service';
 
 @Component({
   selector: 'app-tab-home',
@@ -7,7 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TabHomePage implements OnInit {
 
-  constructor() { }
+  constructor(public tracingService: TracingService, 
+     public sessionService: SessionService) {}
+
+    startLogger(){
+    this.tracingService.start();
+    }
+
+    stopLogger(){
+    this.tracingService.stop();
+    }
+
 
   ngOnInit() {
   }
