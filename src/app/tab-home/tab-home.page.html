@@ -21,14 +21,14 @@
     </ion-grid>
 
   <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="startLogger()">
-      <ion-icon name="begin"></ion-icon>
+    <ion-fab-button (click)="start()">
+      <ion-icon name="begin">Start</ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="stopLogger()">
-      <ion-icon name="stop"></ion-icon>
+    <ion-fab-button (click)="pause()">
+      <ion-icon name="pause">Pause</ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="loginGoogle()">
-      <ion-icon name="login"></ion-icon>
+    <ion-fab-button (click)="stop()">
+      <ion-icon name="login">Stop</ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>
