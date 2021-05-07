@@ -12,12 +12,16 @@ export class TabHomePage implements OnInit {
   constructor(public tracingService: TracingService, 
      public sessionService: SessionService) {}
 
-    startLogger(){
+    start(){
     this.tracingService.start();
     }
 
-    stopLogger(){
+    pause(){
     this.tracingService.stop();
+    }
+
+    stop(){
+
     }
 
 
