@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TracingService } from '../services/tracing.service';
 import { SessionService } from '../services/session.service';
+import { AccessService } from '../services/access.service';
 
 @Component({
   selector: 'app-tab-home',
@@ -10,17 +11,22 @@ import { SessionService } from '../services/session.service';
 export class TabHomePage implements OnInit {
 
   constructor(public tracingService: TracingService, 
-     public sessionService: SessionService) {}
+     public sessionService: SessionService,
+     public access: AccessService) {}
 
     start(){
-    this.tracingService.start();
+    this.sessionService.startDrive();
     }
 
-    pause(){
+    resume(){
     this.tracingService.stop();
     }
 
-    stop(){
+    paulse(){
+
+    }
+
+    save(){
 
     }
 
