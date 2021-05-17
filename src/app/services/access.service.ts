@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { DebugService } from './debug.service';
 
 
 export interface Profile {
@@ -27,7 +26,7 @@ export class AccessService {
     responseType: 'json',
   };
 
-  constructor(private http: HttpClient) { };
+  constructor(private http: HttpClient, public debug: DebugService) { };
 
   getUserUrl = 'https://thlaccess.azurewebsites.net/api/user/baiyungao@gmail.com';
 
@@ -43,7 +42,7 @@ export class AccessService {
       email:mail,
       pwd: password
     }
-    console.log (body);
+    this.debug.debug ("Call webservices: " + loginUrl);
     return this.http.post(loginUrl,body);
   }  
   
@@ -74,7 +73,7 @@ export class AccessService {
       "state": user.state,
       "address": user.address
     }
-    console.log (body);
+    this.debug.debug(body);
     return this.http.post(signupUrl,body,);
   }
 

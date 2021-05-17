@@ -1,9 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Home  {{sessionService.session.userid}} 
-      driving: {{sessionService.drive.driving.daytime}}
-      idle:  {{sessionService.drive.idle}}
+      Home  {{access.currentUser.email}} 
+
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -20,15 +19,16 @@
       </ion-row>
     </ion-grid>
 
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="start()">
-      <ion-icon name="begin">Start</ion-icon>
-    </ion-fab-button>
-    <ion-fab-button (click)="pause()">
-      <ion-icon name="pause">Pause</ion-icon>
-    </ion-fab-button>
-    <ion-fab-button (click)="stop()">
-      <ion-icon name="login">Stop</ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+
+  <ion-card>
+    <ion-item>
+      <ion-button fill="outline" (click)="startDrive()">Start</ion-button>
+    </ion-item>
+    <ion-item>
+      <ion-button fill="outline" (click)="start()">Resume</ion-button>
+    </ion-item>
+    <ion-item>
+      <ion-button fill="outline" (click)="stop()">Pause</ion-button>
+    </ion-item>
+  </ion-card>
 </ion-content>

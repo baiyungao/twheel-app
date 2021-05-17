@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Profile,AccessService } from '../services/access.service';
+import { DebugService } from '../services/debug.service';
 
 @Component({
   selector: 'app-landing',
@@ -19,15 +20,21 @@ export class LandingPage implements OnInit {
   state: string;
   address: string;
 
+  /**
+   * 
+   */
+  debugMsg: string;
 
   isSignup: boolean = false;
   user: Profile;
-  constructor(private router: Router, public access: AccessService) { }
+  constructor(private router: Router, public access: AccessService, public debug: DebugService) { }
 
   login(){
+     
+      this.debug.debug("enter login ....");
       this.access.login(this.email,this.password).subscribe(
       (data: Profile) => {  this.access.currentUser = { ...data }
-                            console.log(this.access.currentUser);
+                            this.debug.debug('authenticiated: '+ JSON.stringify(this.access.currentUser));
                             this.router.navigate(['authenticated']);
                           }
     )
@@ -48,6 +55,7 @@ export class LandingPage implements OnInit {
     }
 
     console.log(userProfile);
+
     this.access.signup(userProfile).subscribe((data)=>{
       this.login();
     })
