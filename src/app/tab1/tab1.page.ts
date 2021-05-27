@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AccessService } from '../services/access.service';
+import { SessionService } from '../services/session.service';
 
 @Component({
   selector: 'app-tab1',
@@ -7,6 +9,9 @@ import { Component } from '@angular/core';
 })
 export class Tab1Page {
 
-  constructor() {}
+  constructor(public sessionService: SessionService,
+    public access: AccessService) {
+      console.log('entering Tab1, list of drive')
+    }
 
 }

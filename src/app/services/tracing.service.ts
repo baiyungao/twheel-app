@@ -17,7 +17,7 @@ export class TracingService {
     this.session.trace(coordinates);
     }
   
-  //start the logger
+  //start tracing the movement
   public async start(){
     this.interval = setInterval(() => {
       this.getCurrentPosition();      

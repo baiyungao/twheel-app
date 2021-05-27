@@ -1,17 +1,28 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 1
+      Drive History:
+      <div *ngIf="access.currentUser"> {{access.currentUser.email}} </div>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-list>
+    <ion-list-header>
+      Recent Drive
+    </ion-list-header>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+
+    <ion-item *ngFor="let item of sessionService.driveList; index as position">
+      <ion-avatar slot="start">
+        <img src="/assets/images/drive.jpg">
+      </ion-avatar>
+      <ion-label>
+        <h3>Start {{item.start}} </h3> 
+        <p>drive time:{{item.drive.daytime}} distance: {{item.drive.distance}}  </p>
+      </ion-label>
+    </ion-item>
+
+  </ion-list>
 </ion-content>
