@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { TabHomePageRoutingModule } from './tab-home-routing.module';
 
 import { TabHomePage } from './tab-home.page';
+import { HMSPipe } from '../thl-format/hms.pipe';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { TabHomePage } from './tab-home.page';
     IonicModule,
     TabHomePageRoutingModule
   ],
-  declarations: [TabHomePage]
+  declarations: [TabHomePage,HMSPipe]
 })
 export class TabHomePageModule {}

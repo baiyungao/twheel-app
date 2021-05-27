@@ -34,4 +34,14 @@
       </ion-row>
     </ion-grid>
   </ion-card>
+
+  <ion-card>
+    <ion-badge color="primary">{{sessionService.myRecord.daytime | hms }}</ion-badge>
+    <ion-item>
+      {{sessionService.myRecord.counts}}
+      
+      {{sessionService.myRecord.nighttime | date:'H:mm:ss':'UTC'}}
+      {{sessionService.myRecord.distance}}
+    </ion-item>
+  </ion-card>
 </ion-content>

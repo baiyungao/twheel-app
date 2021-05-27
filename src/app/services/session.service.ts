@@ -6,11 +6,18 @@ import { AccessService } from './access.service';
 
 const { Geolocation } = Plugins;
 
+export interface Record {
+  counts: number; //total number of drive;
+  daytime: number;
+  nighttime: number;
+  distance: number;
+}
+
 export interface Drive {
   id?: string;
   email: string;
   start: Date;
-  end: Date;
+  stop: Date;
   drive: {
     daytime: number;  //driving time in second during daytime;
     nighttime: number; //driving time in second during nighttime;
@@ -61,13 +68,42 @@ export interface Location {
 })
 export class SessionService {
 
+  myRecord: Record;
   public locations: Location[] = [];
   lastLocation: GeolocationPosition;
   currentDrive: Drive = null;
   ideling: number = 0;
   paused: boolean;
 
-  constructor(private http: HttpClient, public access: AccessService) { }
+  //all drive data with this account
+  driveList: Drive[] = [];
+
+  constructor(private http: HttpClient, public access: AccessService) {
+    this.loadDB();
+  }
+
+  //load data from cloud
+
+  loadDB() {
+    this.myRecord = {
+      counts: 0, daytime: 0, nighttime: 0, distance: 0
+    };
+    //load the drive from DB;
+    this.loadDrives().subscribe((data: []) => {
+      for (let item of data) {
+        let drive: Drive = this.getDriveFromDB(item);
+        this.driveList.push(drive);
+        this.myRecord.counts++;
+        this.myRecord.daytime += drive.drive.daytime;
+        this.myRecord.nighttime += drive.drive.nighttime;
+        this.myRecord.distance += drive.drive.distance;
+        console.log(JSON.stringify(drive));
+      }
+    })
+
+    
+
+  }
 
 
 
@@ -138,16 +174,25 @@ export class SessionService {
   save() {
     const saveUrl = "https://twheeldb.azurewebsites.net/api/adddrive"
     const body = this.currentDrive;
-    this.currentDrive.end = new Date();
+    this.currentDrive.stop = new Date();
     console.log(JSON.stringify(body));
     console.log(JSON.stringify(this.lastLocation));
     return this.http.post(saveUrl, body,);
   }
 
+
+  loadDrives() {
+    let url = "https://twheeldb.azurewebsites.net/api/drive/" + this.access.currentUser.email;
+    return this.http.get(url);
+  }
+
   reset() {
     this.currentDrive = null;
     this.paused = false;
+    this.lastLocation = null;
   }
+
+
 
 
 
@@ -156,7 +201,7 @@ export class SessionService {
   getDrive(): Drive {
     let drive: Drive = {
       email: '',
-      start: null, end: null,
+      start: null, stop: null,
       drive: { daytime: 0, nighttime: 0, distance: 0, distanceB: 0 },
       idle: 0,
       locations: []
@@ -165,16 +210,33 @@ export class SessionService {
     return drive;
   }
 
+  // 
+  getDriveFromDB(dbItem): Drive {
+    let drive: Drive = {
+      email: dbItem.email,
+      start: dbItem.start, stop: dbItem.stop,
+      drive: {
+        daytime: dbItem.daytime,
+        nighttime: dbItem.nighttime,
+        distance: dbItem.distance,
+        distanceB: 0
+      },
+      idle: 0,
+      locations: []
+    };
+
+    return drive;
+  }
 
 
-  getLocation(loc: GeolocationPosition):Location{
+  getLocation(loc: GeolocationPosition): Location {
 
     let location: Location;
     location = {
       timestamp: loc.timestamp,
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
-      altitude:loc.coords.altitude,
+      altitude: loc.coords.altitude,
       accuracy: loc.coords.accuracy,
       altitudeAccuracy: loc.coords.altitudeAccuracy,
       speed: loc.coords.speed,
