@@ -1,101 +1,78 @@
+
+<!-- start here-->
+
+
 <ion-header>
   <ion-toolbar>
-    <ion-title>landing</ion-title>
+    <ion-title>twheel</ion-title>
   </ion-toolbar>
 </ion-header>
 
-
-
 <ion-content>
-
- 
-    <div *ngIf="!isSignup; then loginBlock else signupBlock"></div>
-<ng-template #loginBlock>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Sign on</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-      
+  <div *ngIf="!isSignup; then loginBlock else signupBlock"></div>
+  <!-- Login component-->
+  <ng-template #loginBlock>
+    <ion-content padding>
       <ion-item>
-        <ion-label position="floating">Login Email:</ion-label>
+        <ion-label position="floating" color="primary">Email</ion-label>
         <ion-input type="email" [(ngModel)]="email"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Password:</ion-label>
+        <ion-label position="floating" color="primary">Password</ion-label>
         <ion-input type="password" [(ngModel)]="password"></ion-input>
       </ion-item>
-
-    </ion-card-content>
-    <ion-item>
-      <ion-button shape="round" slot="end" (click)="login()">Login</ion-button>
-    </ion-item>
-  </ion-card>
-
-  <ion-card>
-    <ion-item>
-      <ion-label> Don't have an account</ion-label>
-      <ion-button fill="outline" slot="end" (click)="enterSignup()">Sign up</ion-button>
-    </ion-item>
-  </ion-card>
-
-</ng-template>
-<ng-template #signupBlock>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Sign up</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-      
+    
+      <ion-button color="primary" shape="round" class="submit-btn button-block" (click)="login()">Log In</ion-button>
+    
+    </ion-content>
+    <ion-footer padding>
       <ion-item>
-        <ion-label position="floating" >Login Email:</ion-label>
+        <ion-label> Don't have an account</ion-label>
+        <ion-button fill="outline" slot="end" (click)="enterSignup()">Sign up</ion-button>
+      </ion-item>
+    </ion-footer>
+  </ng-template>
+
+  <!-- Sign up Page-->
+  <ng-template #signupBlock>
+    <ion-content padding>
+      <ion-item>
+        <ion-label position="floating" color="primary">Login Email:</ion-label>
         <ion-input type="email" [(ngModel)]="email"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating" >First Name:</ion-label>
+        <ion-label position="floating" color="primary">First Name:</ion-label>
         <ion-input type="text" [(ngModel)]="firstName"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating" >Last Name:</ion-label>
+        <ion-label position="floating" color="primary">Last Name:</ion-label>
         <ion-input type="text" [(ngModel)]="lastName"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">State:</ion-label>
-        <ion-input type="text"  [(ngModel)]="state"></ion-input>
+        <ion-label position="floating" color="primary">State:</ion-label>
+        <ion-input type="text" [(ngModel)]="state"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Address:</ion-label>
-        <ion-input type="text"  [(ngModel)]="address"></ion-input>
+        <ion-label position="floating" color="primary">Address:</ion-label>
+        <ion-input type="text" [(ngModel)]="address"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating" >Password:</ion-label>
+        <ion-label position="floating" color="primary">Password:</ion-label>
         <ion-input type="password" [(ngModel)]="password"></ion-input>
       </ion-item>
 
-    </ion-card-content>
-    <ion-item>
-      <ion-button shape="round" slot="end" (click)="signup()">Sign up</ion-button>
-    </ion-item>
-  </ion-card>
+      <ion-button color="primary" shape="round" class="submit-btn button-block"
+      (click)="signup()">Sign up</ion-button>
+    
+    </ion-content>
+    <ion-footer padding>
+      <ion-item>
+        <ion-label> have an account</ion-label>
+        <ion-button fill="outline" slot="end" (click)="enterLogin()">Sign on</ion-button>
+      </ion-item>
+    </ion-footer>
 
-  <ion-card>
-    <ion-item>
-      <ion-label> have an account</ion-label>
-      <ion-button fill="outline" slot="end" (click)="enterLogin()">Sign on</ion-button>
-    </ion-item>
-  </ion-card>
-
-</ng-template>
-<ion-card>
-  <ion-item>
-    <ion-label> Debug</ion-label>
-    <ion-textarea [(ngModel)]="debug.debugMsg"></ion-textarea>
-
-  </ion-item>
-</ion-card>
-{{ 156 | hms}}
+  </ng-template>
 
 
 </ion-content>
