@@ -1,19 +1,67 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Home
       <div *ngIf="access.currentUser"> {{access.currentUser.email}} </div>
-      <div *ngIf="sessionService.currentDrive">
-        D: {{sessionService.currentDrive.drive.distance}}
-        D-B: {{sessionService.currentDrive.drive.distanceB}}
-        Time:{{sessionService.currentDrive.drive.daytime}}
-      </div>
-
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Account Summary  
+        <ion-badge color="primary">{{sessionService.myRecord.counts}}</ion-badge>
+      </ion-card-subtitle>
+     </ion-card-header>
+  
+    <ion-card-content>
+     
+      <ion-chip color="tertiary" >
+        <ion-icon name="sunny-outline"></ion-icon>
+        <ion-label color="tertiary"> {{sessionService.myRecord.daytime | hms }}</ion-label>
+      </ion-chip>
+      <ion-chip color="dark" >
+        <ion-icon name="sparkles-outline"></ion-icon>
+        <ion-label color="dark">   {{sessionService.myRecord.nighttime | hms}}</ion-label>
+      </ion-chip>
+      <ion-chip color="primary" > 
+        <ion-icon name="car-outline"></ion-icon>
+        <ion-label color="primary"> Total Miles: 
+           {{(sessionService.myRecord.distance/1609.34)|number: '1.1-1'}}
+        </ion-label>
+      </ion-chip>
+    </ion-card-content>
+  </ion-card>
+
+
+
+  <div *ngIf="sessionService.currentDrive">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Current Drive</ion-card-subtitle>
+       </ion-card-header>
+    
+      <ion-card-content>
+        <ion-chip color="tertiary" >
+          <ion-icon name="sunny-outline"></ion-icon>
+          <ion-label color="tertiary"> {{sessionService.currentDrive.drive.daytime | hms }}</ion-label>
+        </ion-chip>
+        <ion-chip color="dark" >
+          <ion-icon name="sparkles-outline"></ion-icon>
+          <ion-label color="dark">   {{sessionService.currentDrive.drive.nighttime | hms}}</ion-label>
+        </ion-chip>
+        <ion-chip color="primary" > 
+          <ion-icon name="car-outline"></ion-icon>
+          <ion-label color="primary"> Total Miles: 
+             {{(sessionService.currentDrive.drive.distance)|number: '1.1-2'}}
+          </ion-label>
+        </ion-chip>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+
 
   <ion-card>
     <ion-item>
@@ -23,6 +71,7 @@
       <ion-button fill="outline" (click)="save()" [disabled]="!started()">Save</ion-button>
     </ion-item>
   </ion-card>
+  <!--
   <ion-card>
     <ion-grid>
       <ion-row>
@@ -34,14 +83,6 @@
       </ion-row>
     </ion-grid>
   </ion-card>
+-->
 
-  <ion-card>
-    <ion-badge color="primary">{{sessionService.myRecord.daytime | hms }}</ion-badge>
-    <ion-item>
-      {{sessionService.myRecord.counts}}
-      
-      {{sessionService.myRecord.nighttime | date:'H:mm:ss':'UTC'}}
-      {{sessionService.myRecord.distance}}
-    </ion-item>
-  </ion-card>
 </ion-content>

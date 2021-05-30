@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Profile,AccessService } from '../services/access.service';
-import { DebugService } from '../services/debug.service';
+import { LocalStoreService } from '../services/local-store.service';
 
 @Component({
   selector: 'app-landing',
@@ -27,14 +27,15 @@ export class LandingPage implements OnInit {
 
   isSignup: boolean = false;
   user: Profile;
-  constructor(private router: Router, public access: AccessService, public debug: DebugService) { }
+  constructor(private router: Router, public access: AccessService, 
+    public localstore:LocalStoreService) { }
 
   login(){
      
-      this.debug.debug("enter login ....");
+     
       this.access.login(this.email,this.password).subscribe(
       (data: Profile) => {  this.access.currentUser = { ...data }
-                            this.debug.debug('authenticiated: '+ JSON.stringify(this.access.currentUser));
+                            console.log('authenticiated: '+ JSON.stringify(this.access.currentUser));
                             this.router.navigate(['authenticated']);
                           }
     )
@@ -71,6 +72,30 @@ export class LandingPage implements OnInit {
   }
 
   ngOnInit() {
-  }
+    
+  
+    console.log("reconnect ....");
+    this.recover();
+    }
 
+  /**
+   * 
+   */
+  /**
+ * 
+ * @returns function to recover from previou login session;
+ */
+   async recover(){
+    let password:string,email:string;
+    await this.localstore.get("email")
+    .then(data=>{ email= data;});
+    console.log("email:" + email);
+    await this.localstore.get("password")
+    .then(data=>{ password=data});
+    console.log("password:" + password);
+
+    this.email = email;
+    this.password = password;
+    await this.login();
+  }
 }

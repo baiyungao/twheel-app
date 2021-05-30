@@ -11,13 +11,13 @@ export class HMSPipe implements PipeTransform {
     let sec: number = value - hour * 3600 - min * 60;
 
     if (hour >0) {
-      result =  hour + " Hour";
+      result =  hour + " H ";
     }
     if ((hour > 0) || (min > 0)){
-      result += min + " Minute";
+      result += min + " M ";
     }
 
-    result += sec + " Second"
+    result += sec + " S "
 
     return result;
   }

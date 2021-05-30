@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DebugService } from './debug.service';
+import { LocalStoreService } from './local-store.service';
 
 
 export interface Profile {
@@ -26,23 +26,31 @@ export class AccessService {
     responseType: 'json',
   };
 
-  constructor(private http: HttpClient, public debug: DebugService) { };
+  constructor(private http: HttpClient, 
+    private localstore: LocalStoreService) { 
+  };
 
   getUserUrl = 'https://thlaccess.azurewebsites.net/api/user/baiyungao@gmail.com';
+
 
 
   getUser() {
     return this.http.get<Profile>(this.getUserUrl);
   }
 
+
   login(mail:string, password:string)
   {
+ 
+    this.localstore.set("email", mail);
+    this.localstore.set("password", password);
+
     const loginUrl = "https://thlaccess.azurewebsites.net/api/login"
     const body = {
       email:mail,
       pwd: password
     }
-    this.debug.debug ("Call webservices: " + loginUrl);
+    console.info ("Call webservices: " + loginUrl);
     return this.http.post(loginUrl,body);
   }  
   
@@ -73,7 +81,7 @@ export class AccessService {
       "state": user.state,
       "address": user.address
     }
-    this.debug.debug(body);
+    console.info(body);
     return this.http.post(signupUrl,body,);
   }
 

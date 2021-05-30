@@ -6,6 +6,24 @@ import { AccessService } from './access.service';
 
 const { Geolocation } = Plugins;
 
+export interface solarTime{
+  
+    solarNoon: Date,
+    nadir: Date,
+    sunrise: Date,
+    sunset: Date,
+    sunriseEnd: Date,
+    sunsetStart: Date,
+    dawn: Date,
+    dusk: Date,
+    nauticalDawn: Date,
+    nauticalDusk: Date,
+    nightEnd: Date,
+    night: Date,
+    goldenHourEnd: Date,
+    goldenHour: Date
+}
+
 export interface Record {
   counts: number; //total number of drive;
   daytime: number;
