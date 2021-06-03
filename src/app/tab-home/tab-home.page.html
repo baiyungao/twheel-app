@@ -54,7 +54,7 @@
         <ion-chip color="primary" > 
           <ion-icon name="car-outline"></ion-icon>
           <ion-label color="primary"> Total Miles: 
-             {{(sessionService.currentDrive.drive.distance)|number: '1.1-2'}}
+             {{(sessionService.currentDrive.drive.distance/1609.34)|number: '1.1-2'}}
           </ion-label>
         </ion-chip>
       </ion-card-content>
