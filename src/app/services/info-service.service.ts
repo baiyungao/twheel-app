@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable,LOCALE_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Plugins, Capacitor, GeolocationPosition } from '@capacitor/core';
 const { Geolocation } = Plugins;
@@ -15,8 +15,8 @@ const { Geolocation } = Plugins;
     https://api.weather.gov/points/38.8894,-77.0352
     https://api.weather.gov/gridpoints/LWX/96,70/stations
     https://api.weather.gov/stations/KDCA/observations/latest
- */ 
-export interface solarTime{
+ */
+export interface SolarTime {
   solarNoon: Date,
   nadir: Date,
   sunrise: Date,
@@ -33,7 +33,7 @@ export interface solarTime{
   goldenHour: Date
 }
 
-export interface weatherInfo{
+export interface weatherInfo {
   currentCondition: string
 }
 
@@ -43,19 +43,81 @@ export interface weatherInfo{
 
 export class InfoServiceService {
   interval;
-  constructor() { 
+  nightTime:boolean = false;
+  solarTime: SolarTime;
+  timezoneOffset: number;
+  constructor(private http: HttpClient,
+    @Inject(LOCALE_ID) public locale: string) {
+    console.log("start Info Services");
+    this.update();
     this.interval = setInterval(() => {
-      this.update();      
-    },15 * 60 * 1000)
+      this.update();
+    }, 15 * 60 * 1000);
+    this.solarTime = {
+      solarNoon: null,
+      nadir: null,
+      sunrise: null,
+      sunset: null,
+      sunriseEnd: null,
+      sunsetStart: null,
+      dawn: null,
+      dusk: null,
+      nauticalDawn: null,
+      nauticalDusk: null,
+      nightEnd: null,
+      night: null,
+      goldenHourEnd: null,
+      goldenHour: null
+    }
   }
 
 
   /**
    * method to update the information;
    */
-  async update(){
+  async update() {
+
+    
+    let currentLocation = await Geolocation.getCurrentPosition();
+    console.log ("Longtitude:" + currentLocation.coords.longitude + " Latitue:" + currentLocation.coords.latitude);
+
+    //1. get current location;
+
+      console.log ("updated Longtitude:" + currentLocation.coords.longitude 
+      + " Latitue:" + currentLocation.coords.latitude
+      + " hight:" + currentLocation.coords.altitude);
+      //2. retrieve solar time
+     this.updateTime(
+      currentLocation.coords.longitude,
+      currentLocation.coords.latitude,
+      await currentLocation.coords.altitude).subscribe((data:SolarTime) => {
+        console.log("Data:" + JSON.stringify(data));
+
+        this.solarTime=data;
+        console.log("solorTime:" + JSON.stringify(this.solarTime));
+        let now:Date = new Date();
+        let dusk = new Date(this.solarTime.dusk);
+        this.nightTime = (now >= dusk);
+        console.log("local: " + this.locale  + " timezoneOffset:" + now.getTimezoneOffset());
+        this.timezoneOffset = now.getTimezoneOffset();
+        }
+      )
+
+    
 
   }
+    
+   updateTime(longitude:number, latitude:number, height: number)
+    {
+      const url = "https://thlutil.azurewebsites.net/api/solarcalc"
+      const body = {
+        "latitude": latitude,
+        "longtitude":longitude,
+        "height":height	
+        }
+      console.info ("Call webservices: " + url);
+      return this.http.post(url,body);
+    }  
 
 
-}
+  }

@@ -8,7 +8,7 @@ export class HMSPipe implements PipeTransform {
     let result: string = "";
     let hour:number = Math.floor(value / 3600);
     let min: number =  Math.floor((value-hour * 3600)/60);
-    let sec: number = value - hour * 3600 - min * 60;
+    let sec: number = Math.round(value - hour * 3600 - min * 60);
 
     if (hour >0) {
       result =  hour + " H ";

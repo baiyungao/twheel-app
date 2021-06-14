@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SessionService } from '../services/session.service';
 import { AccessService } from '../services/access.service';
+import { InfoServiceService } from '../services/info-service.service';
 
 @Component({
   selector: 'app-tab-home',
@@ -9,7 +10,9 @@ import { AccessService } from '../services/access.service';
 })
 export class TabHomePage implements OnInit {
 
+  now:Date = new Date();
   constructor(public sessionService: SessionService,
+    public infoService:InfoServiceService,
      public access: AccessService) {
        console.log('login user:' + JSON.stringify(this.access.currentUser));
      }

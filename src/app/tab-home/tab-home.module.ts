@@ -8,14 +8,16 @@ import { TabHomePageRoutingModule } from './tab-home-routing.module';
 
 import { TabHomePage } from './tab-home.page';
 import { HMSPipe } from '../thl-format/hms.pipe';
+import { ThlFormatModule } from '../thl-format/thl-format.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    TabHomePageRoutingModule
+    TabHomePageRoutingModule,
+    ThlFormatModule
   ],
-  declarations: [TabHomePage,HMSPipe]
+  declarations: [TabHomePage]
 })
 export class TabHomePageModule {}
