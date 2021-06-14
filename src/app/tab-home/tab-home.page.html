@@ -11,15 +11,16 @@
   <ion-card>
     <ion-card-header>
       <ion-card-subtitle>Account Summary  
-        <ion-badge color="primary">{{sessionService.myRecord.counts}}</ion-badge>
       </ion-card-subtitle>
+       <ion-badge color="primary">{{sessionService.myRecord.counts}}</ion-badge>
+      
      </ion-card-header>
   
     <ion-card-content>
      
       <ion-chip color="tertiary" >
         <ion-icon name="sunny-outline"></ion-icon>
-        <ion-label color="tertiary"> {{sessionService.myRecord.daytime | hms }}</ion-label>
+        <ion-label color="tertiary"> {{sessionService.myRecord.time | hms }}</ion-label>
       </ion-chip>
       <ion-chip color="dark" >
         <ion-icon name="sparkles-outline"></ion-icon>
@@ -45,7 +46,7 @@
       <ion-card-content>
         <ion-chip color="tertiary" >
           <ion-icon name="sunny-outline"></ion-icon>
-          <ion-label color="tertiary"> {{sessionService.currentDrive.drive.daytime | hms }}</ion-label>
+          <ion-label color="tertiary"> {{sessionService.currentDrive.drive.time | hms }}</ion-label>
         </ion-chip>
         <ion-chip color="dark" >
           <ion-icon name="sparkles-outline"></ion-icon>
@@ -54,7 +55,7 @@
         <ion-chip color="primary" > 
           <ion-icon name="car-outline"></ion-icon>
           <ion-label color="primary"> Total Miles: 
-             {{(sessionService.currentDrive.drive.distance)|number: '1.1-2'}}
+             {{(sessionService.currentDrive.drive.distance/1609.34)|number: '1.1-2'}}
           </ion-label>
         </ion-chip>
       </ion-card-content>
@@ -69,6 +70,23 @@
       <ion-button fill="outline" (click)="resume()" [disabled]="!isPaused() || !started()">Resume</ion-button>
       <ion-button fill="outline" (click)="pause()" [disabled]="isPaused() || !started()">Pause</ion-button>
       <ion-button fill="outline" (click)="save()" [disabled]="!started()">Save</ion-button>
+    </ion-item>
+  </ion-card>
+
+  <ion-card>
+     {{infoService.nightTime}} now: {{now|date:'short':'EDT'}}
+     <ion-item> Dusk:
+      <ion-datetime value="{{infoService.solarTime.dusk}}" 
+        displayFormat="MMM DD, YYYY hh:mm A"></ion-datetime>
+   </ion-item>
+     <ion-item>
+     dawn: {{infoService.solarTime.dawn | date:'short':'EDT'}}
+     dawn: {{infoService.solarTime.dawn | date:'short':'240'}}
+     </ion-item>
+     
+     <ion-item>
+     <ion-datetime value="{{infoService.solarTime.dawn}}" 
+      displayFormat="MMM DD, YYYY hh:mm A"></ion-datetime>
     </ion-item>
   </ion-card>
   <!--

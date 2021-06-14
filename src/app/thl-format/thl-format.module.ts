@@ -7,11 +7,4 @@ import { HMSPipe } from './hms.pipe';
   declarations: [HMSPipe],
   exports: [HMSPipe]
 })
-export class ThlFormatModule {
-  static forRoot() {
-    return {
-        ngModule: ThlFormatModule,
-        providers: [],
-    };
- }
- }
+export class ThlFormatModule {}

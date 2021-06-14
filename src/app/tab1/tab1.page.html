@@ -15,13 +15,22 @@
 
 
     <ion-item *ngFor="let item of sessionService.driveList; index as position">
-      <ion-avatar slot="start">
+      <!--<ion-avatar slot="start">
         <img src="/assets/images/drive.jpg">
-      </ion-avatar>
-      <ion-label>
-        <h3>Start {{item.start}} </h3> 
-        <p>drive time:{{item.drive.daytime}} distance: {{item.drive.distance}}  </p>
-      </ion-label>
+      </ion-avatar>  -->
+
+    <ion-datetime value="{{item.start}}" displayFormat="MM/DD/YYYY hh:mm A"></ion-datetime> 
+      
+          <ion-chip color="primary" > 
+            <ion-icon name="car-outline"></ion-icon>
+             <ion-label color="primary">Time: {{item.drive.time | hms }} </ion-label>
+
+            <ion-label color="primary">  , Miles: 
+               {{(item.drive.distance/1609.34)|number: '1.1-2'}}
+            </ion-label>
+          </ion-chip>
+      
+
     </ion-item>
 
   </ion-list>

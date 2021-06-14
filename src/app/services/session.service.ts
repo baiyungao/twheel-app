@@ -2,31 +2,16 @@ import { NumberSymbol } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Plugins, Capacitor, GeolocationPosition } from '@capacitor/core';
+import { Observable } from 'rxjs';
 import { AccessService } from './access.service';
+import { InfoServiceService } from './info-service.service';
 
 const { Geolocation } = Plugins;
-
-export interface solarTime{
-  
-    solarNoon: Date,
-    nadir: Date,
-    sunrise: Date,
-    sunset: Date,
-    sunriseEnd: Date,
-    sunsetStart: Date,
-    dawn: Date,
-    dusk: Date,
-    nauticalDawn: Date,
-    nauticalDusk: Date,
-    nightEnd: Date,
-    night: Date,
-    goldenHourEnd: Date,
-    goldenHour: Date
-}
+const DIRECTION_MARK: number = 5;
 
 export interface Record {
   counts: number; //total number of drive;
-  daytime: number;
+  time: number;
   nighttime: number;
   distance: number;
 }
@@ -37,11 +22,10 @@ export interface Drive {
   start: Date;
   stop: Date;
   drive: {
-    daytime: number;  //driving time in second during daytime;
+    time: number;  //driving time in second during daytime;
     nighttime: number; //driving time in second during nighttime;
     distance: number; //driving distance in meters caculated through speed;
-    distanceB: number; //drive distance caculated through location;
-  }
+   }
   idle: number;  //idling time during the drive;
   locations: Location[];
 }
@@ -86,6 +70,7 @@ export interface Location {
 })
 export class SessionService {
 
+ 
   myRecord: Record;
   public locations: Location[] = [];
   lastLocation: GeolocationPosition;
@@ -96,7 +81,9 @@ export class SessionService {
   //all drive data with this account
   driveList: Drive[] = [];
 
-  constructor(private http: HttpClient, public access: AccessService) {
+  constructor(private http: HttpClient, 
+              private access: AccessService,
+              private info:InfoServiceService ) {
     this.loadDB();
   }
 
@@ -104,7 +91,7 @@ export class SessionService {
 
   loadDB() {
     this.myRecord = {
-      counts: 0, daytime: 0, nighttime: 0, distance: 0
+      counts: 0, time: 0, nighttime: 0, distance: 0
     };
     //load the drive from DB;
     this.loadDrives().subscribe((data: []) => {
@@ -112,18 +99,24 @@ export class SessionService {
         let drive: Drive = this.getDriveFromDB(item);
         this.driveList.push(drive);
         this.myRecord.counts++;
-        this.myRecord.daytime += drive.drive.daytime;
+        console.log ("stop:" + drive.stop.getTime());
+        console.log ("start:" + drive.start.getTime());
+        let drivetime:number = Math.round((drive.stop.getTime()-drive.start.getTime())/1000);
+        console.log ("drive time:" + drivetime);
+        
+        this.myRecord.time += drivetime;
+        console.log ("recorded time:" + this.myRecord.time);
         this.myRecord.nighttime += drive.drive.nighttime;
         this.myRecord.distance += drive.drive.distance;
         console.log(JSON.stringify(drive));
       }
-    })
+
+      console.log(JSON.stringify(this.myRecord));
+    });
 
     
 
   }
-
-
 
   //start a user drive session
   public async startDrive() {
@@ -146,10 +139,13 @@ export class SessionService {
    * @param location 
    * 
    * The geolocation data are the data per sceond;
+   *  In order to control the data points, only recording sensititve datapoints.  The 
+   *  algorithm is tracking heading and speed variable only.
+   * 
    */
   public async trace(location: GeolocationPosition) {
-    this.locations.unshift(this.getLocation(location));
-    if (this.lastLocation != null) {
+    let needRecord:boolean = (this.lastLocation == null);
+     if (this.lastLocation != null) {
       //location changed;
       if ((this.lastLocation.coords.latitude != location.coords.latitude)
         || (this.lastLocation.coords.longitude != location.coords.longitude)) {
@@ -160,10 +156,18 @@ export class SessionService {
           location.coords.latitude, location.coords.longitude, this.lastLocation.coords.latitude,
           this.lastLocation.coords.longitude);
 
+        let speadVariation =   Math.abs((location.coords.speed- this.lastLocation.coords.speed))/this.lastLocation.coords.speed;
+        
+        let directionVariation = Math.abs(location.coords.heading - this.lastLocation.coords.heading);
+        //if the speed change exceed 10% or direction change with in bench mark degree - default 5 degree.
+        if ((speadVariation >= 0.1) 
+          || ( directionVariation < DIRECTION_MARK) 
+          || ( directionVariation >(360-DIRECTION_MARK))) {
+            needRecord = true;
+        }
       }
       else {
         this.ideling++;
-        console.log("idling:" + this.ideling);
       }
 
     }
@@ -174,13 +178,14 @@ export class SessionService {
     }
 
     //apply logic to determine daytime or night time
-    this.currentDrive.drive.daytime++;
-    this.currentDrive.drive.distanceB += location.coords.speed;
-    console.log("moving:" + this.currentDrive.drive.daytime);
-
-
-    //update the lastLocation
-    this.lastLocation = location;
+    let now = new Date();
+    this.currentDrive.drive.time = Math.round((now.getTime()-this.currentDrive.start.getTime())/1000);
+    
+    //update the lastLocation accordingly
+    if (needRecord) {
+      this.locations.unshift(this.getLocation(location));
+      this.lastLocation = location;
+    }
   }
 
   /**
@@ -193,8 +198,35 @@ export class SessionService {
     const saveUrl = "https://twheeldb.azurewebsites.net/api/adddrive"
     const body = this.currentDrive;
     this.currentDrive.stop = new Date();
+
+    let dusk = new Date(this.info.solarTime.dusk);
+    //caculate night time
+    let nightTime = this.currentDrive.stop.getTime() - dusk.getTime();
+    console.log ("night time of current drive:" + nightTime);
+   
+    if (nightTime > this.currentDrive.drive.time) {
+      nightTime = this.currentDrive.drive.time;
+    }
+
+    console.log ("night time of current drive:" + nightTime);
+    if (nightTime > 0) {
+      if (nightTime > this.currentDrive.drive.time) {
+        nightTime = this.currentDrive.drive.time;
+      }
+      this.currentDrive.drive.nighttime = Math.round(nightTime);
+    }
     console.log(JSON.stringify(body));
     console.log(JSON.stringify(this.lastLocation));
+
+    //skip save if the total disitance within 100 meters
+    if (this.currentDrive.drive.distance < 100) {
+      return new Observable((observer) => {
+        // observable execution
+        observer.next("No need to save")
+        observer.complete()
+    });
+    }
+
     return this.http.post(saveUrl, body,);
   }
 
@@ -220,7 +252,7 @@ export class SessionService {
     let drive: Drive = {
       email: '',
       start: null, stop: null,
-      drive: { daytime: 0, nighttime: 0, distance: 0, distanceB: 0 },
+      drive: { time: 0, nighttime: 0, distance: 0 },
       idle: 0,
       locations: []
     };
@@ -232,12 +264,12 @@ export class SessionService {
   getDriveFromDB(dbItem): Drive {
     let drive: Drive = {
       email: dbItem.email,
-      start: dbItem.start, stop: dbItem.stop,
+      start: new Date(dbItem.start), 
+      stop: new Date(dbItem.stop),
       drive: {
-        daytime: dbItem.daytime,
+        time: dbItem.time,
         nighttime: dbItem.nighttime,
-        distance: dbItem.distance,
-        distanceB: 0
+        distance: dbItem.distance
       },
       idle: 0,
       locations: []

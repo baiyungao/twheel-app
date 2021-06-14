@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { LandingPageRoutingModule } from './landing-routing.module';
 
 import { LandingPage } from './landing.page';
-import { HMSPipe } from '../thl-format/hms.pipe';
 
 @NgModule({
   imports: [
@@ -16,6 +15,6 @@ import { HMSPipe } from '../thl-format/hms.pipe';
     IonicModule,
     LandingPageRoutingModule
   ],
-  declarations: [LandingPage,HMSPipe]
+  declarations: [LandingPage]
 })
 export class LandingPageModule {}
